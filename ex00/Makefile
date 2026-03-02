@@ -1,10 +1,10 @@
 NAME = btc
-CPPFLAGS = -Wall -Wextra -Werror -std=c++98 -g3
+CPPFLAGS = -Wall -Wextra -Werror -g3
 CC = c++
 OBJ_DIR = objs
 
 SRCS = main.cpp\
-		Span.cpp
+		BitcoinExchange.cpp
 
 OBJS = $(addprefix $(OBJ_DIR)/, $(SRCS:.cpp=.o))
 
