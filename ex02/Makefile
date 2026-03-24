@@ -1,45 +1,33 @@
+NAME = PMergeMe
+CPPFLAGS = -Wall -Wextra -Werror -std=c++98 -g3
+CC = c++
+OBJ_DIR = objs
 
-CC = c++ -g3
+SRCS = main.cpp
 
-FLAGS = -Wall -Werror -Wextra -MMD -std=c++98
+OBJS = $(addprefix $(OBJ_DIR)/, $(SRCS:.cpp=.o))
 
-NAME = PmergeMe
+$(OBJ_DIR)/%.o: %.cpp
+	@mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) -c $< -o $@
 
-SRCS = main.cpp \
-		PMergeMe.cpp
+all : ${NAME}
 
-OBJS = $(SRCS:.cpp=.o)
-DEPS = $(SRCS:.cpp=.d)
-
-COLOR = \e[94m
-RESET = \e[0m
-
-all	: $(NAME)
-
-%.o: %.cpp
-	@$(CC) $(FLAGS) -c $< -o $@
-
-$(NAME)	:	$(OBJS)
-	@$(CC) -o $(NAME) $(OBJS)
-	@$(CC) -o $(NAME) $(OBJS)
-	@printf "$(COLOR)▗▄▄▄▖▗▖  ▗▖▄▀▀▚▖▄▄▄▄\n"
-	@printf 	    "▐▌    ▝▚▞▘ █  ▐▌   █\n"
-	@printf 	    "▐▛▀▀▘  ▐▌  █  ▐▌█▀▀▀\n"
-	@printf 	    "▐▙▄▄▖▗▞▘▝▚▖▀▄▄▞▘█▄▄▄\n$(RESET)"
+${NAME} : ${OBJS}
+		$(CC) $(CPPFLAGS) -o $(NAME) $(OBJS)
+		@printf "Compiled ✅✅✅\n"
 
 clean	:
-	@rm -f $(OBJS) $(DEPS)
-	@printf "> Ojects        ❌\n"
+	rm -rf $(OBJ_DIR)
+	@printf "Clean 🧹\n"
 
-fclean	:	clean
-	@rm -f $(NAME)
-	@printf "> Executable    ❌\n"
+fclean	: clean
+	rm -f $(NAME)
+	@printf "Big Clean 🧼\n"
 
-re	:	fclean all
+re	: fclean all
 
-.PHONY: all clean fclean re
-
--include $(DEPS)
+.PHONY	: all clean fclean re
 
 #---------- Test ----------
 

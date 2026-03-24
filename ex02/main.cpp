@@ -1,28 +1,33 @@
 #include "PMergeMe.hpp"
 
-
-int main (int ac, char **av)
+void printInput(char **av)
 {
-    try {
-        PMergeMe m(ac - 1);
-        m.parseInput(av);
-        m.printRecursionLayer(1, ac - 1);
-        m.createAndSortPairs(ac - 1, 0);
-        m.printLayers(m._totalLayers);
-    }
-     catch (const std::exception& e)
-    {    std::cout << "Error: " << e.what() << std::endl;}
-    
+    std::cout << "Before:\t";
+    for (int i = 1; av[i]; i++)
+        std::cout << av[i] << " ";
+    std::cout << std::endl;
 }
 
+//./PMergeMe `shuf -i 1-100000 -n 3000 | tr "\n" " "`
+int main(int ac, char **av)
+{
+    if (ac < 2)
+        std::cerr << "Error: no input" << std::endl;
+    try
+    {
+        PMergeMe<std::vector<int> > vector(ac - 1);
+        PMergeMe<std::deque<int> > deque(ac - 1);
 
-// int main (void)
-// {
-//     std::vector<int>jacob = constructJacobsthalIndexSequence(30);
+        vector.FordJohnson(ac, av);
+        deque.FordJohnson(ac, av);
 
-//     std::cout << "FUCK CPP" << std::endl;
-  
-//     for (int i = 0; jacob[i]; i++)
-//         std::cout << jacob[i] << std::endl;
-//     std::cout << "WRITE SMTH" << std::endl;
-// }
+        printInput(av);
+        vector.printOutput();
+        vector.printTime("vector");
+        deque.printTime("deque");
+    }
+    catch (const std::exception &e)
+    {
+        std::cerr << "Error: " << e.what() << std::endl;
+    }
+}
