@@ -5,7 +5,8 @@ FLAGS = -Wall -Werror -Wextra -MMD -std=c++98
 
 NAME = PmergeMe
 
-SRCS += main.cpp PMergeMe.cpp
+SRCS = main.cpp \
+		PMergeMe.cpp
 
 OBJS = $(SRCS:.cpp=.o)
 DEPS = $(SRCS:.cpp=.d)

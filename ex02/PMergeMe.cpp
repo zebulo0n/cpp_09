@@ -76,41 +76,59 @@ void PMergeMe::createAndSortPairs(int seqSize, int lvl)
     createAndSortPairs((seqSize) / 2, lvl + 1);
 }
 
-// int Jacobsthal(int n)
-// {
-//     // base case
-//     if (n == 0)
-//         return 0;
+int jacobsthal(int n)
+{
+    if (n == 0) return 0;
+    if (n == 1) return 1;
+    int a = 0, b = 1;
+    for (int i = 2; i <= n; i++)
+    {
+        int tmp = b + 2 * a;
+        a = b;
+        b = tmp;
+    }
+    return b;
+}
 
-//     // base case
-//     if (n == 1)
-//         return 1;
 
-//     // recursive step.
-//     return Jacobsthal(n - 1) + 2 * Jacobsthal(n - 2);
-// }
+std::vector<int> constructJacobsthalIndexSequence(int pendSize)
+{
+    std::vector<int> seq;
 
-// std::vector<int> constructJacobsthalIndexSequence (int pendSize)
-// {
-//     std::vector<int> seq;
-//     seq.resize(pendSize);
+    // Step 1: collect Jacobsthal numbers > 0 that fit within pendSize
+    // jacobsthal(1) = 1, jacobsthal(2) = 1, jacobsthal(3) = 3, ...
+    // start at n=1 to get the sequence 1, 3, 5, 11, 21...
+    std::vector<int> jacobNums;
+    for (int n = 1; jacobsthal(n) <= pendSize; n++)
+    {
+        int j = jacobsthal(n);
+        // skip duplicates (jacobsthal(1) == jacobsthal(2) == 1)
+        if (jacobNums.empty() || j != jacobNums.back())
+            jacobNums.push_back(j);
+    }
 
-//     int j = 1;
-//     int i = 0;
-//     int lastJacobsthal = Jacobsthal(1);
-//     int value = lastJacobsthal;
-//     seq[i++] = value;
-//     for (; i < pendSize; i++)
-//     {
-//         value = Jacobsthal(j);
-//         //lastJacobsthal = value;
-//         j++;
-//         seq[i++] = value;
-//         while (value != lastJacobsthal + 1)
-//             seq[i++] = value--;
-//     }
-//     return seq;
-// }
+    // Step 2: build insertion order
+    // for each Jacobsthal number, insert from it DOWN TO previous+1
+    int prev = 0;
+    for (int i = 0; i < (int)jacobNums.size(); i++)
+    {
+        int curr = jacobNums[i];
+        // insert curr, curr-1, curr-2, ..., prev+1
+        for (int val = curr; val > prev; val--)
+        {
+            if (val <= pendSize)
+                seq.push_back(val);
+        }
+        prev = curr;
+    }
+
+    // Step 3: append any remaining indices past the last Jacobsthal number
+    // (in case pendSize > last jacobsthal number, fill forward)
+    for (int val = prev + 1; val <= pendSize; val++)
+        seq.push_back(val);
+
+    return seq;
+}
 
 // void PMergeMe::binarySearchInsert(int lvl)
 // {
@@ -218,30 +236,30 @@ PMergeMe::~PMergeMe(void)
 }
 
 
-void PMergeMe::printFlattened3D(const std::vector<int>& tab, size_t X, size_t Y, size_t Z) {
-    if (tab.empty()) {
-        std::cout << "[Empty Vector]" << std::endl;
-        return;
-    }
+// void PMergeMe::printFlattened3D(const std::vector<int>& tab, size_t X, size_t Y, size_t Z) {
+//     if (tab.empty()) {
+//         std::cout << "[Empty Vector]" << std::endl;
+//         return;
+//     }
 
-    std::cout << "Flattened 3D Vector Dimensions: " << X 
-              << " x " << Y 
-              << " x " << Z << "\n\n";
+//     std::cout << "Flattened 3D Vector Dimensions: " << X 
+//               << " x " << Y 
+//               << " x " << Z << "\n\n";
 
-    for (size_t i = 0; i < X; ++i) {
-        std::cout << "--- Layer i=" << i << " ---\n";
-        for (size_t j = 0; j < Y; ++j) {
-            std::cout << "  Row j=" << j << ": [ ";
-            for (size_t k = 0; k < Z; ++k) {
-                // Calculate manual index
-                size_t index = i * (Y * Z) + j * Z + k;
-                std::cout << tab[index] << " ";
-            }
-            std::cout << "]\n";
-        }
-        std::cout << "\n";
-    }
-}
+//     for (size_t i = 0; i < X; ++i) {
+//         std::cout << "--- Layer i=" << i << " ---\n";
+//         for (size_t j = 0; j < Y; ++j) {
+//             std::cout << "  Row j=" << j << ": [ ";
+//             for (size_t k = 0; k < Z; ++k) {
+//                 // Calculate manual index
+//                 size_t index = i * (Y * Z) + j * Z + k;
+//                 std::cout << tab[index] << " ";
+//             }
+//             std::cout << "]\n";
+//         }
+//         std::cout << "\n";
+//     }
+// }
 
 
 
